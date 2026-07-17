@@ -51,7 +51,7 @@ public sealed class LaserTrail
 
     private void AddSegment(Point a, Point b)
     {
-        var color = ParseColor(_settings.LaserColor);
+        var color = ParseColor(_settings.LaserColorHex);
         var line = new Line
         {
             X1 = a.X,
@@ -71,7 +71,7 @@ public sealed class LaserTrail
     private void AddDot(Point p)
     {
         double size = _settings.LaserThickness;
-        var color = ParseColor(_settings.LaserColor);
+        var color = ParseColor(_settings.LaserColorHex);
         var dot = new Ellipse
         {
             Width = size,

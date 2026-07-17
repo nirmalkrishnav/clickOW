@@ -34,9 +34,10 @@
             <TextBlock Text="General" Style="{StaticResource Header}" />
             <CheckBox Content="Enable ClickOw (Ctrl+Alt+C)" IsChecked="{Binding Enabled}" />
             <CheckBox Content="Laser pointer mode (Ctrl+Alt+L)" IsChecked="{Binding LaserMode}" />
+            <CheckBox Content="Drag animation" IsChecked="{Binding DragAnimation}" />
             <CheckBox x:Name="StartupCheck" Content="Run at Windows startup" IsChecked="{Binding RunAtStartup}" />
 
-            <TextBlock Text="Colors (ARGB hex, e.g. #FF3DA5FF)" Style="{StaticResource Header}" />
+            <TextBlock Text="Colors" Style="{StaticResource Header}" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120" />
@@ -47,42 +48,75 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Click" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Margin="4" SelectedValuePath="Tag"
+                          SelectedValue="{Binding ClickColor}">
+                    <ComboBoxItem Content="Default" Tag="{x:Static local:ColorTheme.Default}" />
+                    <ComboBoxItem Content="Teal Nebula" Tag="{x:Static local:ColorTheme.TealNebula}" />
+                    <ComboBoxItem Content="Coral Blush" Tag="{x:Static local:ColorTheme.CoralBlush}" />
+                    <ComboBoxItem Content="Amethyst Haze" Tag="{x:Static local:ColorTheme.AmethystHaze}" />
+                    <ComboBoxItem Content="Golden Aurora" Tag="{x:Static local:ColorTheme.GoldenAurora}" />
+                    <ComboBoxItem Content="Mint Mirage" Tag="{x:Static local:ColorTheme.MintMirage}" />
+                </ComboBox>
+                <Border Grid.Row="0" Grid.Column="2" Margin="4" CornerRadius="3"
+                        Background="{Binding ClickColorHex, Converter={StaticResource BrushConverter}}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Drag" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Margin="4" SelectedValuePath="Tag"
+                          SelectedValue="{Binding DragColor}">
+                    <ComboBoxItem Content="Default" Tag="{x:Static local:ColorTheme.Default}" />
+                    <ComboBoxItem Content="Teal Nebula" Tag="{x:Static local:ColorTheme.TealNebula}" />
+                    <ComboBoxItem Content="Coral Blush" Tag="{x:Static local:ColorTheme.CoralBlush}" />
+                    <ComboBoxItem Content="Amethyst Haze" Tag="{x:Static local:ColorTheme.AmethystHaze}" />
+                    <ComboBoxItem Content="Golden Aurora" Tag="{x:Static local:ColorTheme.GoldenAurora}" />
+                    <ComboBoxItem Content="Mint Mirage" Tag="{x:Static local:ColorTheme.MintMirage}" />
+                </ComboBox>
+                <Border Grid.Row="1" Grid.Column="2" Margin="4" CornerRadius="3"
+                        Background="{Binding DragColorHex, Converter={StaticResource BrushConverter}}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Laser" />
+                <ComboBox Grid.Row="2" Grid.Column="1" Margin="4" SelectedValuePath="Tag"
+                          SelectedValue="{Binding LaserColor}">
+                    <ComboBoxItem Content="Default" Tag="{x:Static local:ColorTheme.Default}" />
+                    <ComboBoxItem Content="Teal Nebula" Tag="{x:Static local:ColorTheme.TealNebula}" />
+                    <ComboBoxItem Content="Coral Blush" Tag="{x:Static local:ColorTheme.CoralBlush}" />
+                    <ComboBoxItem Content="Amethyst Haze" Tag="{x:Static local:ColorTheme.AmethystHaze}" />
+                    <ComboBoxItem Content="Golden Aurora" Tag="{x:Static local:ColorTheme.GoldenAurora}" />
+                    <ComboBoxItem Content="Mint Mirage" Tag="{x:Static local:ColorTheme.MintMirage}" />
+                </ComboBox>
+                <Border Grid.Row="2" Grid.Column="2" Margin="4" CornerRadius="3"
+                        Background="{Binding LaserColorHex, Converter={StaticResource BrushConverter}}" />
+            </Grid>
+
+            <TextBlock Text="Sizes" Style="{StaticResource Header}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Press" />
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="4" Text="{Binding PressColor, UpdateSourceTrigger=PropertyChanged}" />
-                <Border Grid.Row="0" Grid.Column="2" Margin="4" Background="{Binding PressColor, Converter={StaticResource BrushConverter}}" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Click size" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Margin="4" SelectedValuePath="Tag"
+                          SelectedValue="{Binding ClickSizePreset}">
+                    <ComboBoxItem Content="Small" Tag="{x:Static local:SizePreset.Small}" />
+                    <ComboBoxItem Content="Medium" Tag="{x:Static local:SizePreset.Medium}" />
+                    <ComboBoxItem Content="Large" Tag="{x:Static local:SizePreset.Large}" />
+                </ComboBox>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Release" />
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="4" Text="{Binding ReleaseColor, UpdateSourceTrigger=PropertyChanged}" />
-                <Border Grid.Row="1" Grid.Column="2" Margin="4" Background="{Binding ReleaseColor, Converter={StaticResource BrushConverter}}" />
-
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Right-click" />
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="4" Text="{Binding RightColor, UpdateSourceTrigger=PropertyChanged}" />
-                <Border Grid.Row="2" Grid.Column="2" Margin="4" Background="{Binding RightColor, Converter={StaticResource BrushConverter}}" />
-
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Drag" />
-                <TextBox Grid.Row="3" Grid.Column="1" Margin="4" Text="{Binding DragColor, UpdateSourceTrigger=PropertyChanged}" />
-                <Border Grid.Row="3" Grid.Column="2" Margin="4" Background="{Binding DragColor, Converter={StaticResource BrushConverter}}" />
-
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Laser" />
-                <TextBox Grid.Row="4" Grid.Column="1" Margin="4" Text="{Binding LaserColor, UpdateSourceTrigger=PropertyChanged}" />
-                <Border Grid.Row="4" Grid.Column="2" Margin="4" Background="{Binding LaserColor, Converter={StaticResource BrushConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Laser thickness" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Margin="4" SelectedValuePath="Tag"
+                          SelectedValue="{Binding LaserThicknessPreset}">
+                    <ComboBoxItem Content="Small" Tag="{x:Static local:SizePreset.Small}" />
+                    <ComboBoxItem Content="Medium" Tag="{x:Static local:SizePreset.Medium}" />
+                    <ComboBoxItem Content="Large" Tag="{x:Static local:SizePreset.Large}" />
+                </ComboBox>
             </Grid>
-
-            <TextBlock Text="Sizing &amp; timing" Style="{StaticResource Header}" />
-            <TextBlock Text="Click size" Margin="0,4,0,0" />
-            <Slider Minimum="16" Maximum="120" Value="{Binding ClickSize}" TickFrequency="4" IsSnapToTickEnabled="True" />
-            <TextBlock Text="Effect duration (ms)" Margin="0,4,0,0" />
-            <Slider Minimum="150" Maximum="1500" Value="{Binding EffectDuration}" TickFrequency="50" IsSnapToTickEnabled="True" />
-            <TextBlock Text="Drag threshold (px)" Margin="0,4,0,0" />
-            <Slider Minimum="1" Maximum="30" Value="{Binding DragThreshold}" TickFrequency="1" IsSnapToTickEnabled="True" />
-            <TextBlock Text="Laser thickness" Margin="0,4,0,0" />
-            <Slider Minimum="1" Maximum="20" Value="{Binding LaserThickness}" TickFrequency="1" IsSnapToTickEnabled="True" />
-            <TextBlock Text="Laser fade (ms)" Margin="0,4,0,0" />
-            <Slider Minimum="200" Maximum="2000" Value="{Binding LaserFadeDuration}" TickFrequency="100" IsSnapToTickEnabled="True" />
 
             <Button x:Name="CloseButton" Content="Close" Width="90" Height="30" HorizontalAlignment="Right"
                     Margin="0,20,0,0" Click="CloseButton_Click" />

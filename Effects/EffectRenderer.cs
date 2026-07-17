@@ -26,7 +26,7 @@ public sealed class EffectRenderer
     public void ShowPress(Point p)
     {
         double size = _settings.ClickSize;
-        var color = ParseColor(_settings.PressColor);
+        var color = ParseColor(_settings.ClickColorHex);
 
         var ellipse = new Ellipse
         {
@@ -44,7 +44,7 @@ public sealed class EffectRenderer
     public void ShowRelease(Point p)
     {
         double size = _settings.ClickSize;
-        var color = ParseColor(_settings.ReleaseColor);
+        var color = ParseColor(_settings.ClickColorHex);
 
         var ring = new Ellipse
         {
@@ -64,7 +64,7 @@ public sealed class EffectRenderer
     public void ShowRightClick(Point p)
     {
         double size = _settings.ClickSize * 1.1;
-        var color = ParseColor(_settings.RightColor);
+        var color = ParseColor(_settings.ClickColorHex);
 
         var ring = new Ellipse
         {
@@ -85,7 +85,7 @@ public sealed class EffectRenderer
     public void ShowDragTrail(Point p)
     {
         double size = _settings.ClickSize * 0.4;
-        var color = ParseColor(_settings.DragColor);
+        var color = ParseColor(_settings.DragColorHex);
 
         var dot = new Ellipse
         {

@@ -1,29 +1,32 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace ClickOw.Settings;
 
 /// <summary>
-/// User-configurable settings. Values are stored as ARGB hex strings so the model
-/// stays free of WPF dependencies and serializes cleanly to JSON.
+/// User-configurable settings. Colors are chosen from prebuilt <see cref="ColorTheme"/>
+/// options and sizes from <see cref="SizePreset"/> options, keeping the model free of
+/// WPF dependencies and serializing cleanly to JSON.
 /// </summary>
 public sealed class AppSettings : INotifyPropertyChanged
 {
+    // Base colors used when a color theme is set to Default.
+    private const string ClickDefaultHex = "#FF3DA5FF"; // blue
+    private const string DragDefaultHex = "#FFB68CFF";  // purple
+    private const string LaserDefaultHex = "#FFFF4D4D"; // red
+
     private bool _enabled = true;
     private bool _laserMode;
+    private bool _dragAnimation = true;
     private bool _runAtStartup = true;
 
-    private string _pressColor = "#FF3DA5FF";   // blue
-    private string _releaseColor = "#FF7FE0A0"; // green
-    private string _rightColor = "#FFFF9F45";   // orange
-    private string _dragColor = "#FFB68CFF";    // purple
-    private string _laserColor = "#FFFF4D4D";   // red
+    private ColorTheme _clickColor = ColorTheme.Default;
+    private ColorTheme _dragColor = ColorTheme.Default;
+    private ColorTheme _laserColor = ColorTheme.Default;
 
-    private double _clickSize = 44;      // diameter in DIP of a ripple at full size
-    private double _effectDuration = 550; // ms
-    private double _dragThreshold = 6;   // px before movement counts as a drag
-    private double _laserThickness = 5;  // stroke thickness in DIP
-    private double _laserFadeDuration = 700; // ms for a laser segment to fade
+    private SizePreset _clickSizePreset = SizePreset.Medium;
+    private SizePreset _laserThicknessPreset = SizePreset.Medium;
 
     public bool Enabled
     {
@@ -37,75 +40,80 @@ public sealed class AppSettings : INotifyPropertyChanged
         set => Set(ref _laserMode, value);
     }
 
+    /// <summary>When enabled, dragging leaves a trailing dot effect.</summary>
+    public bool DragAnimation
+    {
+        get => _dragAnimation;
+        set => Set(ref _dragAnimation, value);
+    }
+
     public bool RunAtStartup
     {
         get => _runAtStartup;
         set => Set(ref _runAtStartup, value);
     }
 
-    public string PressColor
+    public ColorTheme ClickColor
     {
-        get => _pressColor;
-        set => Set(ref _pressColor, value);
+        get => _clickColor;
+        set => Set(ref _clickColor, value, nameof(ClickColor), nameof(ClickColorHex));
     }
 
-    public string ReleaseColor
-    {
-        get => _releaseColor;
-        set => Set(ref _releaseColor, value);
-    }
-
-    public string RightColor
-    {
-        get => _rightColor;
-        set => Set(ref _rightColor, value);
-    }
-
-    public string DragColor
+    public ColorTheme DragColor
     {
         get => _dragColor;
-        set => Set(ref _dragColor, value);
+        set => Set(ref _dragColor, value, nameof(DragColor), nameof(DragColorHex));
     }
 
-    public string LaserColor
+    public ColorTheme LaserColor
     {
         get => _laserColor;
-        set => Set(ref _laserColor, value);
+        set => Set(ref _laserColor, value, nameof(LaserColor), nameof(LaserColorHex));
     }
 
-    public double ClickSize
+    public SizePreset ClickSizePreset
     {
-        get => _clickSize;
-        set => Set(ref _clickSize, value);
+        get => _clickSizePreset;
+        set => Set(ref _clickSizePreset, value, nameof(ClickSizePreset), nameof(ClickSize));
     }
 
-    public double EffectDuration
+    public SizePreset LaserThicknessPreset
     {
-        get => _effectDuration;
-        set => Set(ref _effectDuration, value);
+        get => _laserThicknessPreset;
+        set => Set(ref _laserThicknessPreset, value, nameof(LaserThicknessPreset), nameof(LaserThickness));
     }
 
-    public double DragThreshold
-    {
-        get => _dragThreshold;
-        set => Set(ref _dragThreshold, value);
-    }
+    // --- Resolved values consumed by the renderers (not persisted directly) ---
 
-    public double LaserThickness
-    {
-        get => _laserThickness;
-        set => Set(ref _laserThickness, value);
-    }
+    [JsonIgnore]
+    public string ClickColorHex => ColorPalette.ResolveHex(_clickColor, ClickDefaultHex);
 
-    public double LaserFadeDuration
-    {
-        get => _laserFadeDuration;
-        set => Set(ref _laserFadeDuration, value);
-    }
+    [JsonIgnore]
+    public string DragColorHex => ColorPalette.ResolveHex(_dragColor, DragDefaultHex);
+
+    [JsonIgnore]
+    public string LaserColorHex => ColorPalette.ResolveHex(_laserColor, LaserDefaultHex);
+
+    [JsonIgnore]
+    public double ClickSize => SizeScale.ClickDiameter(_clickSizePreset);
+
+    [JsonIgnore]
+    public double LaserThickness => SizeScale.LaserThickness(_laserThicknessPreset);
+
+    // --- Fixed (non-configurable) timing and threshold values ---
+
+    [JsonIgnore]
+    public double EffectDuration => 550;    // ms
+
+    [JsonIgnore]
+    public double DragThreshold => 6;       // px before movement counts as a drag
+
+    [JsonIgnore]
+    public double LaserFadeDuration => 700; // ms for a laser segment to fade
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void Set<T>(ref T field, T value, [CallerMemberName] string? name = null)
+    private void Set<T>(ref T field, T value, [CallerMemberName] string? name = null, string? alsoNotify = null)
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
         {
@@ -114,5 +122,9 @@ public sealed class AppSettings : INotifyPropertyChanged
 
         field = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        if (alsoNotify is not null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(alsoNotify));
+        }
     }
 }

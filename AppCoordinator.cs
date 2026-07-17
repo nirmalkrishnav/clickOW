@@ -153,7 +153,7 @@ public sealed class AppCoordinator : IDisposable
         {
             _laser.Extend(canvasPoint);
         }
-        else
+        else if (_settings.Enabled && _settings.DragAnimation)
         {
             _renderer.ShowDragTrail(canvasPoint);
         }
