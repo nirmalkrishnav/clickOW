@@ -33,13 +33,22 @@ Built for **live demos, screen shares, UX reviews, and teaching**, ClickOw shine
 
 Both modes work independently — run clicks, laser, both, or neither.
 
+## ⬇️ Download
+
+Grab the latest build from the releases page — no installation or .NET runtime required, just run the `.exe`:
+
+- **[Download ClickOw (latest release)](https://github.com/nirmalkrishnav/clickow/releases/latest/download/ClickOw.exe)**
+- [All releases](https://github.com/nirmalkrishnav/clickow/releases)
+
+> ClickOw is currently in **beta**. Feedback and issues are welcome!
+
 ## 🚀 Getting Started
 
-**Requirements:** Windows 10/11 and the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0).
+**Requirements:** Windows 10/11. The downloadable `.exe` is self-contained and needs no runtime. To build from source you need the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 ```powershell
-git clone https://github.com/<your-username>/ClickOw.git
-cd ClickOw
+git clone https://github.com/nirmalkrishnav/clickow.git
+cd clickow
 dotnet run
 ```
 
