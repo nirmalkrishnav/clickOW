@@ -64,6 +64,15 @@ public partial class App : Application
             Icon = LoadTrayIcon(),
         };
 
+        // Open the context menu on left click as well as the default right click.
+        _trayIcon.TrayLeftMouseUp += (_, _) =>
+        {
+            if (_trayIcon.ContextMenu is { } contextMenu)
+            {
+                contextMenu.IsOpen = true;
+            }
+        };
+
         var menu = new ContextMenu();
 
         var enabledItem = new MenuItem
@@ -134,6 +143,9 @@ public partial class App : Application
         var quitItem = new MenuItem { Header = "Quit ClickOw" };
         quitItem.Click += (_, _) => Shutdown();
 
+        var aboutItem = new MenuItem { Header = $"About ClickOw  V {GetAppVersion()}" };
+        aboutItem.Click += (_, _) => OpenAboutPage();
+
         menu.Items.Add(enabledItem);
         menu.Items.Add(laserItem);
         menu.Items.Add(dragItem);
@@ -143,6 +155,8 @@ public partial class App : Application
         menu.Items.Add(options);
         menu.Items.Add(new Separator());
         menu.Items.Add(quitItem);
+        menu.Items.Add(new Separator());
+        menu.Items.Add(aboutItem);
 
         _trayIcon.ContextMenu = menu;
         WarmUpContextMenu(menu);
@@ -290,6 +304,28 @@ public partial class App : Application
     private static string FriendlyName(string pascalCase)
     {
         return Regex.Replace(pascalCase, "(\\B[A-Z])", " $1");
+    }
+
+    private static string GetAppVersion()
+    {
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        return version is null ? "1.0" : $"{version.Major}.{version.Minor}";
+    }
+
+    private static void OpenAboutPage()
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "https://github.com/nirmalkrishnav/clickow",
+                UseShellExecute = true,
+            });
+        }
+        catch
+        {
+            // Ignore failures to launch the default browser.
+        }
     }
 
     private static System.Drawing.Icon LoadTrayIcon()
