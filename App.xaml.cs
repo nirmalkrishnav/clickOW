@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using ClickOw.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -8,7 +11,8 @@ namespace ClickOw;
 
 /// <summary>
 /// Application entry point. Runs tray-only: no main window is shown. Owns the tray
-/// icon, settings and the <see cref="AppCoordinator"/> that drives the overlay.
+/// icon, settings and the <see cref="AppCoordinator"/> that drives the overlay. Every
+/// setting is exposed directly through the tray icon's right-click menu.
 /// </summary>
 public partial class App : Application
 {
@@ -16,10 +20,15 @@ public partial class App : Application
     private TaskbarIcon? _trayIcon;
     private AppSettings? _settings;
     private AppCoordinator? _coordinator;
-    private SettingsWindow? _settingsWindow;
 
-    private MenuItem? _enabledItem;
-    private MenuItem? _laserItem;
+    // Base colors used when a color theme is set to Default; mirror AppSettings so the
+    // menu swatches show the resolved color for each context.
+    private const string ClickDefaultHex = "#FF3DA5FF";
+    private const string DragDefaultHex = "#FFB68CFF";
+    private const string LaserDefaultHex = "#FFFF4D4D";
+
+    // All checkable menu items and the predicate that decides whether they are checked.
+    private readonly List<(MenuItem Item, Func<bool> IsChecked)> _checkables = new();
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -37,10 +46,14 @@ public partial class App : Application
         StartupManager.Apply(_settings.RunAtStartup);
 
         _coordinator = new AppCoordinator(_settings);
-        _coordinator.StateChanged += (_, _) => Dispatcher.Invoke(UpdateMenuState);
+        _coordinator.StateChanged += (_, _) => Dispatcher.Invoke(() =>
+        {
+            SettingsStore.Save(_settings);
+            RefreshChecks();
+        });
 
         BuildTrayIcon();
-        UpdateMenuState();
+        RefreshChecks();
     }
 
     private void BuildTrayIcon()
@@ -53,63 +66,203 @@ public partial class App : Application
 
         var menu = new ContextMenu();
 
-        _enabledItem = new MenuItem { Header = "Enabled  (Ctrl+Alt+C)", IsCheckable = true };
-        _enabledItem.Click += (_, _) => _coordinator?.ToggleEnabled();
+        var enabledItem = new MenuItem
+        {
+            Header = "Enabled  (Ctrl+Alt+C)",
+            IsCheckable = true,
+            StaysOpenOnClick = true,
+        };
+        enabledItem.Click += (_, _) => _coordinator?.ToggleEnabled();
+        Register(enabledItem, () => _coordinator?.Enabled == true);
 
-        _laserItem = new MenuItem { Header = "Laser pointer  (Ctrl+Alt+L)", IsCheckable = true };
-        _laserItem.Click += (_, _) => _coordinator?.ToggleLaser();
+        var laserItem = new MenuItem
+        {
+            Header = "Laser pointer  (Ctrl+Alt+L)",
+            IsCheckable = true,
+            StaysOpenOnClick = true,
+        };
+        laserItem.Click += (_, _) => ApplyChange(() =>
+        {
+            _coordinator?.ToggleLaser();
+            // Laser and drag animation are mutually exclusive.
+            if (_settings!.LaserMode)
+            {
+                _settings.DragAnimation = false;
+            }
+        });
+        Register(laserItem, () => _coordinator?.LaserMode == true);
 
-        var settingsItem = new MenuItem { Header = "Settings\u2026" };
-        settingsItem.Click += (_, _) => ShowSettings();
+        // Drag animation sits under laser and is mutually exclusive with it.
+        var dragItem = BuildToggle(
+            "Drag animation",
+            () => _settings!.DragAnimation,
+            v =>
+            {
+                _settings!.DragAnimation = v;
+                if (v)
+                {
+                    _settings.LaserMode = false;
+                }
+            });
+
+        // Colors submenu with per-context color choices.
+        var colors = new MenuItem { Header = "Colors" };
+        colors.Items.Add(BuildColorSubmenu(
+            "Click color", ClickDefaultHex,
+            () => _settings!.ClickColor, v => _settings!.ClickColor = v));
+        colors.Items.Add(BuildColorSubmenu(
+            "Drag color", DragDefaultHex,
+            () => _settings!.DragColor, v => _settings!.DragColor = v));
+        colors.Items.Add(BuildColorSubmenu(
+            "Laser color", LaserDefaultHex,
+            () => _settings!.LaserColor, v => _settings!.LaserColor = v));
+
+        // Sizes submenu.
+        var sizes = new MenuItem { Header = "Sizes" };
+        sizes.Items.Add(BuildSizeSubmenu(
+            "Click size",
+            () => _settings!.ClickSizePreset, v => _settings!.ClickSizePreset = v));
+        sizes.Items.Add(BuildSizeSubmenu(
+            "Laser thickness",
+            () => _settings!.LaserThicknessPreset, v => _settings!.LaserThicknessPreset = v));
+
+        // Options submenu for remaining toggles.
+        var options = new MenuItem { Header = "Options" };
+        options.Items.Add(BuildToggle(
+            "Run at Windows startup",
+            () => _settings!.RunAtStartup, v => _settings!.RunAtStartup = v,
+            afterChange: () => StartupManager.Apply(_settings!.RunAtStartup)));
 
         var quitItem = new MenuItem { Header = "Quit ClickOw" };
         quitItem.Click += (_, _) => Shutdown();
 
-        menu.Items.Add(_enabledItem);
-        menu.Items.Add(_laserItem);
+        menu.Items.Add(enabledItem);
+        menu.Items.Add(laserItem);
+        menu.Items.Add(dragItem);
         menu.Items.Add(new Separator());
-        menu.Items.Add(settingsItem);
+        menu.Items.Add(colors);
+        menu.Items.Add(sizes);
+        menu.Items.Add(options);
         menu.Items.Add(new Separator());
         menu.Items.Add(quitItem);
 
         _trayIcon.ContextMenu = menu;
-        _trayIcon.TrayMouseDoubleClick += (_, _) => ShowSettings();
     }
 
-    private void UpdateMenuState()
+    private MenuItem BuildColorSubmenu(
+        string header, string defaultHex, Func<ColorTheme> getter, Action<ColorTheme> setter)
     {
-        if (_enabledItem is not null && _coordinator is not null)
+        var submenu = new MenuItem { Header = header };
+        foreach (ColorTheme theme in ColorPalette.All)
         {
-            _enabledItem.IsChecked = _coordinator.Enabled;
+            ColorTheme captured = theme;
+            var item = new MenuItem
+            {
+                Header = FriendlyName(captured.ToString()),
+                IsCheckable = true,
+                StaysOpenOnClick = true,
+                Icon = BuildSwatch(ColorPalette.ResolveHex(captured, defaultHex)),
+            };
+            item.Click += (_, _) => ApplyChange(() => setter(captured));
+            Register(item, () => EqualityComparer<ColorTheme>.Default.Equals(getter(), captured));
+            submenu.Items.Add(item);
         }
 
-        if (_laserItem is not null && _coordinator is not null)
-        {
-            _laserItem.IsChecked = _coordinator.LaserMode;
-        }
+        return submenu;
     }
 
-    private void ShowSettings()
+    private MenuItem BuildSizeSubmenu(
+        string header, Func<SizePreset> getter, Action<SizePreset> setter)
     {
-        if (_settings is null)
+        var submenu = new MenuItem { Header = header };
+        foreach (SizePreset preset in (SizePreset[])Enum.GetValues(typeof(SizePreset)))
         {
-            return;
+            SizePreset captured = preset;
+            var item = new MenuItem
+            {
+                Header = captured.ToString(),
+                IsCheckable = true,
+                StaysOpenOnClick = true,
+            };
+            item.Click += (_, _) => ApplyChange(() => setter(captured));
+            Register(item, () => EqualityComparer<SizePreset>.Default.Equals(getter(), captured));
+            submenu.Items.Add(item);
         }
 
-        if (_settingsWindow is { IsLoaded: true })
-        {
-            _settingsWindow.Activate();
-            return;
-        }
+        return submenu;
+    }
 
-        _settingsWindow = new SettingsWindow(_settings);
-        _settingsWindow.Closed += (_, _) =>
+    private MenuItem BuildToggle(
+        string header, Func<bool> getter, Action<bool> setter, Action? afterChange = null)
+    {
+        var item = new MenuItem
         {
-            _settingsWindow = null;
-            UpdateMenuState();
+            Header = header,
+            IsCheckable = true,
+            StaysOpenOnClick = true,
         };
-        _settingsWindow.Show();
-        _settingsWindow.Activate();
+        item.Click += (_, _) => ApplyChange(() =>
+        {
+            setter(!getter());
+            afterChange?.Invoke();
+        });
+        Register(item, getter);
+        return item;
+    }
+
+    private void ApplyChange(Action change)
+    {
+        change();
+        if (_settings is not null)
+        {
+            SettingsStore.Save(_settings);
+        }
+
+        RefreshChecks();
+    }
+
+    private void Register(MenuItem item, Func<bool> isChecked)
+    {
+        _checkables.Add((item, isChecked));
+    }
+
+    private void RefreshChecks()
+    {
+        foreach ((MenuItem item, Func<bool> isChecked) in _checkables)
+        {
+            item.IsChecked = isChecked();
+        }
+    }
+
+    private static object BuildSwatch(string hex)
+    {
+        return new Rectangle
+        {
+            Width = 12,
+            Height = 12,
+            RadiusX = 2,
+            RadiusY = 2,
+            Fill = BrushFromHex(hex),
+            Stroke = new SolidColorBrush(Color.FromArgb(0x40, 0, 0, 0)),
+            StrokeThickness = 1,
+        };
+    }
+
+    private static Brush BrushFromHex(string hex)
+    {
+        try
+        {
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+        }
+        catch
+        {
+            return Brushes.Transparent;
+        }
+    }
+
+    private static string FriendlyName(string pascalCase)
+    {
+        return Regex.Replace(pascalCase, "(\\B[A-Z])", " $1");
     }
 
     private static System.Drawing.Icon LoadTrayIcon()
