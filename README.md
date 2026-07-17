@@ -1,17 +1,17 @@
-# 🖱️ ClickOw
+# 🖱️ ClickOW
 
-**See every click, live.** ClickOw is a lightweight Windows tray app that highlights your mouse clicks in real time — so your audience always knows exactly where and when you clicked.
+**See every click, live.** ClickOW is a lightweight Windows tray app that highlights your mouse clicks in real time — so your audience always knows exactly where and when you clicked.
 
-Built for **live demos, screen shares, UX reviews, and teaching**, ClickOw shines in the moment. Screen recorders like Screen Studio and CleanShot add click effects *after* the fact. ClickOw is for the live moment itself — no editing, no interruptions, just clarity.
+Built for **live demos, screen shares, UX reviews, and teaching**, ClickOW shines in the moment. Screen recorders like Screen Studio and CleanShot add click effects *after* the fact. ClickOW is for the live moment itself — no editing, no interruptions, just clarity.
 
 <!-- 📸 Screenshot placeholder — replace with your own -->
 <p align="center">
-  <img src="docs/screenshot.png" alt="ClickOw screenshot" width="640">
+  <img src="docs/screenshot.png" alt="ClickOW screenshot" width="640">
 </p>
 
 <!-- 🎬 Demo GIF placeholder — replace with your own -->
 <p align="center">
-  <img src="docs/demo.gif" alt="ClickOw demo" width="640">
+  <img src="docs/demo.gif" alt="ClickOW demo" width="640">
 </p>
 
 ## ✨ Features
@@ -37,10 +37,10 @@ Both modes work independently — run clicks, laser, both, or neither.
 
 Grab the latest build from the releases page — no installation or .NET runtime required, just run the `.exe`:
 
-- **[Download ClickOw (latest release)](https://github.com/nirmalkrishnav/clickow/releases/latest/download/ClickOw.exe)**
+- **[Download ClickOW (latest release)](https://github.com/nirmalkrishnav/clickow/releases/latest/download/ClickOW.exe)**
 - [All releases](https://github.com/nirmalkrishnav/clickow/releases)
 
-> ClickOw is currently in **beta**. Feedback and issues are welcome!
+> ClickOW is currently in **beta**. Feedback and issues are welcome!
 
 ## 🚀 Getting Started
 
@@ -58,7 +58,7 @@ Or build a standalone executable:
 dotnet publish -c Release
 ```
 
-Once running, look for the **ClickOw** icon in your system tray. Right-click it for options, or double-click to open **Settings**.
+Once running, look for the **ClickOW** icon in your system tray. Right-click it for options, or double-click to open **Settings**.
 
 ## ⚙️ Settings
 
@@ -69,11 +69,11 @@ Open the settings window from the tray icon to adjust:
 - Drag threshold, laser thickness, and laser fade time
 - Run at Windows startup
 
-Settings are saved to `%AppData%\ClickOw\settings.json`.
+Settings are saved to `%AppData%\ClickOW\settings.json`.
 
 ## 🙏 Credits
 
-ClickOw was inspired by [**ClickLight** by aurorascharff](https://github.com/aurorascharff/ClickLight) — a macOS menu bar app that highlights your clicks for demos, recordings, UX reviews, and better click visibility. ClickOw brings the same idea to **Windows**.
+ClickOW was inspired by [**ClickLight** by aurorascharff](https://github.com/aurorascharff/ClickLight) — a macOS menu bar app that highlights your clicks for demos, recordings, UX reviews, and better click visibility. ClickOW brings the same idea to **Windows**.
 
 ## 📄 License
 

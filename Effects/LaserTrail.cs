@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using ClickOw.Settings;
+using ClickOW.Settings;
 
-namespace ClickOw.Effects;
+namespace ClickOW.Effects;
 
 /// <summary>
 /// Laser pointer mode: while dragging, appends freehand segments that fade out over

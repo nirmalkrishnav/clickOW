@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using ClickOw.Interop;
+using ClickOW.Interop;
 
-namespace ClickOw.Overlay;
+namespace ClickOW.Overlay;
 
 /// <summary>
 /// A borderless, transparent, click-through window that spans the entire virtual

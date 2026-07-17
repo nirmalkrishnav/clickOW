@@ -1,7 +1,7 @@
-﻿<Application x:Class="ClickOw.App"
+﻿<Application x:Class="ClickOW.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ClickOw"
+             xmlns:local="clr-namespace:ClickOW"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
          

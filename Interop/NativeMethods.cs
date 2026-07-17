@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace ClickOw.Interop;
+namespace ClickOW.Interop;
 
 /// <summary>
 /// P/Invoke declarations and constants for global hooks and layered click-through windows.

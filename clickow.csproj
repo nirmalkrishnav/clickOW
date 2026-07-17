@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <RootNamespace>ClickOw</RootNamespace>
-    <AssemblyName>ClickOw</AssemblyName>
+    <RootNamespace>ClickOW</RootNamespace>
+    <AssemblyName>ClickOW</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\tray.ico</ApplicationIcon>
   </PropertyGroup>

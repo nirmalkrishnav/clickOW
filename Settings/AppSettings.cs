@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
-namespace ClickOw.Settings;
+namespace ClickOW.Settings;
 
 /// <summary>
 /// User-configurable settings. Colors are chosen from prebuilt <see cref="ColorTheme"/>

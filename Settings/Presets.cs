@@ -1,4 +1,4 @@
-namespace ClickOw.Settings;
+namespace ClickOW.Settings;
 
 /// <summary>Standard size options offered in the UI.</summary>
 public enum SizePreset

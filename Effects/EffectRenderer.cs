@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using ClickOw.Settings;
+using ClickOW.Settings;
 
-namespace ClickOw.Effects;
+namespace ClickOW.Effects;
 
 /// <summary>
 /// Renders the distinct click visuals (press, release, right-click, drag) onto the

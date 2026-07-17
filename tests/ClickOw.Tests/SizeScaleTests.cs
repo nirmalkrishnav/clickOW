@@ -1,4 +1,4 @@
-using ClickOw.Settings;
+using ClickOW.Settings;
 using Xunit;
 
 namespace ClickOw.Tests;

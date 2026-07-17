@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using ClickOw.Interop;
+using ClickOW.Interop;
 
-namespace ClickOw.Hooks;
+namespace ClickOW.Hooks;
 
 /// <summary>
 /// System-wide low-level keyboard hook that fires named events for the
@@ -17,7 +17,7 @@ public sealed class GlobalKeyboardHook : IDisposable
     private nint _hookId = nint.Zero;
     private bool _disposed;
 
-    /// <summary>Raised when Ctrl+Alt+O is pressed (toggle ClickOw on/off).</summary>
+    /// <summary>Raised when Ctrl+Alt+O is pressed (toggle ClickOW on/off).</summary>
     public event EventHandler? ToggleEnabled;
 
     /// <summary>Raised when Ctrl+Alt+L is pressed (toggle laser pointer mode).</summary>

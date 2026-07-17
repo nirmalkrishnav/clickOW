@@ -1,15 +1,15 @@
 using System.IO;
 using System.Text.Json;
 
-namespace ClickOw.Settings;
+namespace ClickOW.Settings;
 
 /// <summary>
-/// Loads and saves <see cref="AppSettings"/> as JSON under %AppData%\ClickOw.
+/// Loads and saves <see cref="AppSettings"/> as JSON under %AppData%\ClickOW.
 /// </summary>
 public static class SettingsStore
 {
     private static readonly string Folder =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClickOw");
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClickOW");
 
     private static readonly string FilePath = Path.Combine(Folder, "settings.json");
 

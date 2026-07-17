@@ -1,10 +1,10 @@
 using System.Windows;
-using ClickOw.Effects;
-using ClickOw.Hooks;
-using ClickOw.Overlay;
-using ClickOw.Settings;
+using ClickOW.Effects;
+using ClickOW.Hooks;
+using ClickOW.Overlay;
+using ClickOW.Settings;
 
-namespace ClickOw;
+namespace ClickOW;
 
 /// <summary>
 /// Central controller: owns the overlay, hooks and effect renderers, and translates

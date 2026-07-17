@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using ClickOw.Interop;
+using ClickOW.Interop;
 
-namespace ClickOw.Hooks;
+namespace ClickOW.Hooks;
 
 public enum MouseButtonKind
 {

@@ -4,10 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using ClickOw.Settings;
+using ClickOW.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace ClickOw;
+namespace ClickOW;
 
 /// <summary>
 /// Application entry point. Runs tray-only: no main window is shown. Owns the tray
@@ -35,7 +35,7 @@ public partial class App : Application
         base.OnStartup(e);
 
         // Enforce a single running instance.
-        _singleInstanceMutex = new Mutex(initiallyOwned: true, "ClickOw.SingleInstance", out bool createdNew);
+        _singleInstanceMutex = new Mutex(initiallyOwned: true, "ClickOW.SingleInstance", out bool createdNew);
         if (!createdNew)
         {
             Shutdown();
@@ -60,7 +60,7 @@ public partial class App : Application
     {
         _trayIcon = new TaskbarIcon
         {
-            ToolTipText = "ClickOw",
+            ToolTipText = "ClickOW",
             Icon = LoadTrayIcon(),
         };
 
@@ -140,10 +140,10 @@ public partial class App : Application
             () => _settings!.RunAtStartup, v => _settings!.RunAtStartup = v,
             afterChange: () => StartupManager.Apply(_settings!.RunAtStartup)));
 
-        var quitItem = new MenuItem { Header = "Quit ClickOw" };
+        var quitItem = new MenuItem { Header = "Quit ClickOW" };
         quitItem.Click += (_, _) => Shutdown();
 
-        var aboutItem = new MenuItem { Header = $"About ClickOw  V {GetAppVersion()}" };
+        var aboutItem = new MenuItem { Header = $"About ClickOW  V {GetAppVersion()}" };
         aboutItem.Click += (_, _) => OpenAboutPage();
 
         menu.Items.Add(enabledItem);

@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace ClickOw.Settings;
+namespace ClickOW.Settings;
 
 /// <summary>
 /// Manages the "Run at Windows startup" registry entry under the current user's Run key.
@@ -8,7 +8,7 @@ namespace ClickOw.Settings;
 public static class StartupManager
 {
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "ClickOw";
+    private const string ValueName = "ClickOW";
 
     public static void Apply(bool runAtStartup)
     {
