@@ -6,7 +6,7 @@ namespace ClickOw.Hooks;
 
 /// <summary>
 /// System-wide low-level keyboard hook that fires named events for the
-/// application's global shortcuts (Ctrl+Alt+C, Ctrl+Alt+L).
+/// application's global shortcuts (Ctrl+Alt+O, Ctrl+Alt+L).
 /// </summary>
 public sealed class GlobalKeyboardHook : IDisposable
 {
@@ -17,7 +17,7 @@ public sealed class GlobalKeyboardHook : IDisposable
     private nint _hookId = nint.Zero;
     private bool _disposed;
 
-    /// <summary>Raised when Ctrl+Alt+C is pressed (toggle ClickOw on/off).</summary>
+    /// <summary>Raised when Ctrl+Alt+O is pressed (toggle ClickOw on/off).</summary>
     public event EventHandler? ToggleEnabled;
 
     /// <summary>Raised when Ctrl+Alt+L is pressed (toggle laser pointer mode).</summary>
@@ -68,7 +68,7 @@ public sealed class GlobalKeyboardHook : IDisposable
 
                 if (ctrl && alt)
                 {
-                    if (key == Key.C)
+                    if (key == Key.O)
                     {
                         ToggleEnabled?.Invoke(this, EventArgs.Empty);
                     }

@@ -16,9 +16,13 @@ public sealed class AppSettings : INotifyPropertyChanged
     private const string DragDefaultHex = "#FFB68CFF";  // purple
     private const string LaserDefaultHex = "#FFFF4D4D"; // red
 
+    // Fixed, non-configurable color for right-click visuals; deliberately distinct from
+    // the left-click color and outside the selectable theme palette.
+    private const string RightClickHex = "#FFFF7043"; // persimmon orange
+
     private bool _enabled = true;
     private bool _laserMode;
-    private bool _dragAnimation = true;
+    private bool _dragAnimation;
     private bool _runAtStartup = true;
 
     private ColorTheme _clickColor = ColorTheme.Default;
@@ -93,6 +97,9 @@ public sealed class AppSettings : INotifyPropertyChanged
 
     [JsonIgnore]
     public string LaserColorHex => ColorPalette.ResolveHex(_laserColor, LaserDefaultHex);
+
+    [JsonIgnore]
+    public string RightClickColorHex => RightClickHex;
 
     [JsonIgnore]
     public double ClickSize => SizeScale.ClickDiameter(_clickSizePreset);

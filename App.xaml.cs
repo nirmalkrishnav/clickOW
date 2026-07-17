@@ -68,7 +68,7 @@ public partial class App : Application
 
         var enabledItem = new MenuItem
         {
-            Header = "Enabled  (Ctrl+Alt+C)",
+            Header = "Enabled  (Ctrl+Alt+O)",
             IsCheckable = true,
             StaysOpenOnClick = true,
         };
@@ -105,26 +105,24 @@ public partial class App : Application
                 }
             });
 
-        // Colors submenu with per-context color choices.
+        // Colors submenu: each context is a titled section of inline color choices.
         var colors = new MenuItem { Header = "Colors" };
-        colors.Items.Add(BuildColorSubmenu(
-            "Click color", ClickDefaultHex,
-            () => _settings!.ClickColor, v => _settings!.ClickColor = v));
-        colors.Items.Add(BuildColorSubmenu(
-            "Drag color", DragDefaultHex,
-            () => _settings!.DragColor, v => _settings!.DragColor = v));
-        colors.Items.Add(BuildColorSubmenu(
-            "Laser color", LaserDefaultHex,
-            () => _settings!.LaserColor, v => _settings!.LaserColor = v));
+        AddColorSection(colors.Items, "Click color", ClickDefaultHex,
+            () => _settings!.ClickColor, v => _settings!.ClickColor = v);
+        colors.Items.Add(new Separator());
+        AddColorSection(colors.Items, "Drag color", DragDefaultHex,
+            () => _settings!.DragColor, v => _settings!.DragColor = v);
+        colors.Items.Add(new Separator());
+        AddColorSection(colors.Items, "Laser color", LaserDefaultHex,
+            () => _settings!.LaserColor, v => _settings!.LaserColor = v);
 
-        // Sizes submenu.
+        // Sizes submenu: each context is a titled section of inline size choices.
         var sizes = new MenuItem { Header = "Sizes" };
-        sizes.Items.Add(BuildSizeSubmenu(
-            "Click size",
-            () => _settings!.ClickSizePreset, v => _settings!.ClickSizePreset = v));
-        sizes.Items.Add(BuildSizeSubmenu(
-            "Laser thickness",
-            () => _settings!.LaserThicknessPreset, v => _settings!.LaserThicknessPreset = v));
+        AddSizeSection(sizes.Items, "Click size",
+            () => _settings!.ClickSizePreset, v => _settings!.ClickSizePreset = v);
+        sizes.Items.Add(new Separator());
+        AddSizeSection(sizes.Items, "Laser thickness",
+            () => _settings!.LaserThicknessPreset, v => _settings!.LaserThicknessPreset = v);
 
         // Options submenu for remaining toggles.
         var options = new MenuItem { Header = "Options" };
@@ -147,12 +145,35 @@ public partial class App : Application
         menu.Items.Add(quitItem);
 
         _trayIcon.ContextMenu = menu;
+        WarmUpContextMenu(menu);
     }
 
-    private MenuItem BuildColorSubmenu(
-        string header, string defaultHex, Func<ColorTheme> getter, Action<ColorTheme> setter)
+    /// <summary>
+    /// Realizes the context menu's popup off-screen once at idle so its first real
+    /// open doesn't flicker (WPF builds the popup visual tree lazily on first show).
+    /// </summary>
+    private void WarmUpContextMenu(ContextMenu menu)
     {
-        var submenu = new MenuItem { Header = header };
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Absolute;
+                menu.HorizontalOffset = -10000;
+                menu.VerticalOffset = -10000;
+                menu.IsOpen = true;
+                menu.IsOpen = false;
+                menu.ClearValue(ContextMenu.PlacementProperty);
+                menu.ClearValue(ContextMenu.HorizontalOffsetProperty);
+                menu.ClearValue(ContextMenu.VerticalOffsetProperty);
+            }),
+            System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+    }
+
+    private void AddColorSection(
+        ItemCollection items, string title, string defaultHex,
+        Func<ColorTheme> getter, Action<ColorTheme> setter)
+    {
+        items.Add(BuildHeader(title));
         foreach (ColorTheme theme in ColorPalette.All)
         {
             ColorTheme captured = theme;
@@ -165,16 +186,14 @@ public partial class App : Application
             };
             item.Click += (_, _) => ApplyChange(() => setter(captured));
             Register(item, () => EqualityComparer<ColorTheme>.Default.Equals(getter(), captured));
-            submenu.Items.Add(item);
+            items.Add(item);
         }
-
-        return submenu;
     }
 
-    private MenuItem BuildSizeSubmenu(
-        string header, Func<SizePreset> getter, Action<SizePreset> setter)
+    private void AddSizeSection(
+        ItemCollection items, string title, Func<SizePreset> getter, Action<SizePreset> setter)
     {
-        var submenu = new MenuItem { Header = header };
+        items.Add(BuildHeader(title));
         foreach (SizePreset preset in (SizePreset[])Enum.GetValues(typeof(SizePreset)))
         {
             SizePreset captured = preset;
@@ -186,10 +205,18 @@ public partial class App : Application
             };
             item.Click += (_, _) => ApplyChange(() => setter(captured));
             Register(item, () => EqualityComparer<SizePreset>.Default.Equals(getter(), captured));
-            submenu.Items.Add(item);
+            items.Add(item);
         }
+    }
 
-        return submenu;
+    private static MenuItem BuildHeader(string text)
+    {
+        return new MenuItem
+        {
+            Header = text,
+            IsEnabled = false,
+            FontWeight = FontWeights.SemiBold,
+        };
     }
 
     private MenuItem BuildToggle(

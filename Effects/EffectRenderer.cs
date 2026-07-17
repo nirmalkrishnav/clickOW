@@ -64,7 +64,7 @@ public sealed class EffectRenderer
     public void ShowRightClick(Point p)
     {
         double size = _settings.ClickSize * 1.1;
-        var color = ParseColor(_settings.ClickColorHex);
+        var color = ParseColor(_settings.RightClickColorHex);
 
         var ring = new Ellipse
         {
