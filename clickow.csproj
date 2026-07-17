@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The test project lives under tests\; keep its sources out of the app build. -->
+    <Compile Remove="tests\**\*.cs" />
+    <Page Remove="tests\**\*.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
   </ItemGroup>
 
