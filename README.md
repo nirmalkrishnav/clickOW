@@ -20,7 +20,7 @@ Built for **live demos, screen shares, UX reviews, and teaching**, ClickOW shine
 - **Distinct visuals per action** — separate effects for press, release, right-click, and drag, so nothing is ambiguous.
 - **Laser pointer mode** — draw fading freehand strokes while you drag to guide attention like a real laser pointer.
 - **Global shortcuts** — flip things on and off without breaking your flow.
-- **Fully customizable** — tune colors, sizes, durations, and thresholds from a simple settings window.
+- **Fully customizable** — choose from preset color themes and sizes from a simple settings window.
 - **Click-through overlay** — highlights never intercept your clicks; the app underneath always receives them.
 - **Runs at startup** — set it and forget it.
 
@@ -28,7 +28,7 @@ Built for **live demos, screen shares, UX reviews, and teaching**, ClickOW shine
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl` + `Alt` + `C` | Toggle click highlights on/off |
+| `Ctrl` + `Alt` + `O` | Toggle click highlights on/off |
 | `Ctrl` + `Alt` + `L` | Toggle laser pointer mode |
 
 Both modes work independently — run clicks, laser, both, or neither.
@@ -64,9 +64,9 @@ Once running, look for the **ClickOW** icon in your system tray. Right-click it 
 
 Open the settings window from the tray icon to adjust:
 
-- Colors for press, release, right-click, drag, and laser
-- Click effect size and duration
-- Drag threshold, laser thickness, and laser fade time
+- Color themes for click, drag, and laser effects (Default, Teal Nebula, Coral Blush, Amethyst Haze, Golden Aurora, Mint Mirage)
+- Click effect size and laser thickness (Small, Medium, Large)
+- Enable/disable drag animation trail
 - Run at Windows startup
 
 Settings are saved to `%AppData%\ClickOW\settings.json`.
